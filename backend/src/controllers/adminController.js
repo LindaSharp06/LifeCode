@@ -60,13 +60,44 @@ async function getQrCodeList(req,res){
   }
 }
 
-async function fileDownload(req,res){
+// async function fileDownload(req,res){
   
-  try {
-    const  {qrCodes}  = req.body;
-    // return res.json(qrCodes);
-    // qrCodes = [{ token, partner_name }]
+//   try {
+//     const  {qrCodes}  = req.body;
+//     // return res.json(qrCodes);
+//     // qrCodes = [{ token, partner_name }]
     
+//     res.setHeader("Content-Type", "application/zip");
+//     res.setHeader(
+//       "Content-Disposition",
+//       "attachment; filename=qr_codes.zip"
+//     );
+
+//     const archive = archiver("zip", { zlib: { level: 9 } });
+//     archive.pipe(res);
+
+//     // for (const qr of qrCodes) {
+      
+//       const url = `https://yourdomain.com/start?code=${qrCodes.token}`;
+//       console.log(url);
+//       const qrBuffer = await QRCode.toBuffer(url);
+
+//       const fileName = `${qrCodes.partner_name}_${qrCodes.token}.png`;
+
+//       archive.append(qrBuffer, { name: fileName });
+//     // }
+
+//     await archive.finalize();
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error generating ZIP");
+//   }
+// }
+
+async function fileDownload(req, res) {
+  try {
+    const { qrCodes } = req.body;
+
     res.setHeader("Content-Type", "application/zip");
     res.setHeader(
       "Content-Disposition",
@@ -74,20 +105,25 @@ async function fileDownload(req,res){
     );
 
     const archive = archiver("zip", { zlib: { level: 9 } });
-    archive.pipe(res);
+    archive.pipe(res);    console.log('=======',qrCodes.token)
+      const targetUrl = `https://yourdomain.com/start?code=${qrCodes.token}`;
 
-    // for (const qr of qrCodes) {
+      const encodedUrl = encodeURIComponent(targetUrl);
       
-      const url = `https://yourdomain.com/start?code=${qrCodes.token}`;
-      console.log(url);
-      const qrBuffer = await QRCode.toBuffer(url);
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=FFFFFF&data=${encodedUrl}&qzone=1&margin=0&size=400x400&ecc=L`;
 
-      const fileName = `${qrCodes.partner_name}_${qrCodes.token}.png`;
+      console.log("QR API:", qrApiUrl);
 
-      archive.append(qrBuffer, { name: fileName });
-    // }
+      const response = await fetch(qrApiUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const fileName = `${qrCodes.username}_${qrCodes.token}.png`;
+
+      archive.append(buffer, { name: fileName });
 
     await archive.finalize();
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Error generating ZIP");

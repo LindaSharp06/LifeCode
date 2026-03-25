@@ -7,9 +7,11 @@ async function insertQrCode({ username, dateOfBirth, token, createdAt }) {
   `;
   try {
     const [result] = await db.execute(sql, [username, dateOfBirth, token, createdAt, 0]);
+    const list = await getAllQrCodes();
     return {
-      result
+      list
     };
+    
   } catch (err) {
     console.error('DB Insert Error:', err);
     throw err;
