@@ -24,7 +24,12 @@ function createQrCode(username, dateOfBirth) {
   });
 }
 
+async function getCodeList() {
+  return await qrCodeModel.getAllQrCodes();
+}
+
 module.exports = {
   generateQrToken,
   createQrCode,
+  getCodeList
 };

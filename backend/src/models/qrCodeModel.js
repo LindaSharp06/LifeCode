@@ -16,6 +16,18 @@ async function insertQrCode({ username, dateOfBirth, token, createdAt }) {
   }
 }
 
+async function getAllQrCodes() {
+  const sql = `SELECT * FROM qr_codes ORDER BY created_at DESC`;
+  try {
+    const [rows] = await db.execute(sql);
+    return rows; 
+  } catch (err) {
+    console.error('DB Fetch Error:', err);
+    throw err;
+  }
+}
+
 module.exports = {
   insertQrCode,
+  getAllQrCodes
 };
