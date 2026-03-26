@@ -6,7 +6,8 @@ const router = express.Router();
 router.post('/download-qr-zip',adminController.fileDownload);
 // console.log('asdfasdf');
 router.get('/health', adminAuth, adminController.getHealth);
-router.post('/qr-codes', adminController.createQrCode);
+router.post('/create_qr_codes', adminController.createQrCode);
+router.post('/update_qrcode', adminController.updateQrCode);
 router.post('/get_qrcodes_list', adminController.getQrCodeList);
 
 module.exports = router;

@@ -24,12 +24,39 @@ function createQrCode(username, dateOfBirth) {
   });
 }
 
+async function updateQrCode({ id, username, dateOfBirth, status }) {
+ return await qrCodeModel.updateQrCode(
+  {
+    id,
+    username,
+    dateOfBirth, 
+    status
+  }
+ );
+}
+
 async function getCodeList() {
   return await qrCodeModel.getAllQrCodes();
+}
+
+
+async function findByToken(token) {
+ 
+  const sql = `SELECT * FROM qr_codes WHERE token = ?`;
+  const [rows] = await db.execute(sql, [token]);
+  return rows[0];
+}
+
+async function markAsUsed(token) {
+  const sql = `UPDATE qr_codes SET status = '1' WHERE token = ?`;
+  await db.execute(sql, [token]);
 }
 
 module.exports = {
   generateQrToken,
   createQrCode,
-  getCodeList
+  getCodeList,
+  updateQrCode,
+  markAsUsed,
+  findByToken
 };

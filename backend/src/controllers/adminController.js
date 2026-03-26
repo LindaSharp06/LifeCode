@@ -44,6 +44,39 @@ async function createQrCode(req, res) {
   }
 }
 
+async function updateQrCode(req, res) {
+  const { id, username, dateOfBirth, status } = req.body || {};
+
+  if (!id) {
+    return res.status(400).json({ error: "id is required" });
+  }
+
+  if (!username || typeof username !== "string") {
+    return res.status(400).json({ error: "username is required" });
+  }
+
+  if (!dateOfBirth || typeof dateOfBirth !== "string") {
+    return res.status(400).json({ error: "dateOfBirth is required" });
+  }
+
+  try {
+    const updated = await qrService.updateQrCode({
+      id,
+      username,
+      dateOfBirth,
+      status
+    });
+
+    return res.json(updated);
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to update QR" });
+  }
+}
+
+
+
 async function getQrCodeList(req,res){
 
   try {
@@ -106,7 +139,7 @@ async function fileDownload(req, res) {
 
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(res);    console.log('=======',qrCodes.token)
-      const targetUrl = `https://yourdomain.com/start?code=${qrCodes.token}`;
+      const targetUrl = `https://localhost:5173/start?code=${qrCodes.token}`;
 
       const encodedUrl = encodeURIComponent(targetUrl);
       
@@ -134,5 +167,6 @@ module.exports = {
   getHealth,
   createQrCode,
   getQrCodeList,
-  fileDownload
+  fileDownload,
+  updateQrCode
 };

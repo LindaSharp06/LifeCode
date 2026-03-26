@@ -3,6 +3,6 @@ const userController = require('../controllers/userController');
 
 const router = express.Router();
 
-// router.post('/qr-codes', userController.createQrCode);
+router.post('/verify-user', userController.verifyUser);
 
 module.exports = router;
